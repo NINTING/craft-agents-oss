@@ -560,6 +560,12 @@ export interface ElectronAPI {
   getRtkStatus(opts?: { forceRecheck?: boolean }): Promise<{ installed: boolean; path: string | null; version: string | null }>
   getRtkGain(): Promise<{ totalCommands: number; totalInput: number; totalOutput: number; totalSaved: number; avgSavingsPct: number; totalTimeMs: number; avgTimeMs: number } | null>
 
+  // Hachios settings
+  getHachiosAccount(): Promise<string>
+  setHachiosAccount(account: string): Promise<void>
+  getHachiosApiKey(): Promise<string>
+  setHachiosApiKey(apiKey: string): Promise<void>
+
   // Network proxy settings
   getNetworkProxySettings(): Promise<NetworkProxySettings | undefined>
   setNetworkProxySettings(settings: NetworkProxySettings): Promise<void>

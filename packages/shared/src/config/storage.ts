@@ -83,6 +83,9 @@ export interface StoredConfig {
   networkProxy?: import('./types.ts').NetworkProxySettings;
   // Windows: path to Git Bash (bash.exe) for the SDK subprocess
   gitBashPath?: string;
+  // Hachios settings
+  hachiosAccount?: string;
+  hachiosApiKey?: string;
   // User chose "Setup later" during onboarding — skip showing onboarding on next launch
   setupDeferred?: boolean;
   // Server mode — embedded remote server settings
@@ -476,6 +479,46 @@ export function setBrowserToolEnabled(enabled: boolean): void {
   // Clear session tool caches so all sessions pick up the change immediately.
   // Lazy import to avoid circular dependency (storage ← session-scoped-tools ← storage).
   import('../agent/session-scoped-tools.ts').then(m => m.invalidateAllSessionToolsCaches()).catch(() => {});
+}
+
+// ============================================================
+// Hachios Settings
+// ============================================================
+
+/**
+ * Get the hachios account name.
+ */
+export function getHachiosAccount(): string {
+  const config = loadStoredConfig();
+  return config?.hachiosAccount ?? '';
+}
+
+/**
+ * Set the hachios account name.
+ */
+export function setHachiosAccount(account: string): void {
+  const config = loadStoredConfig();
+  if (!config) return;
+  config.hachiosAccount = account || undefined;
+  saveConfig(config);
+}
+
+/**
+ * Get the hachios API key.
+ */
+export function getHachiosApiKey(): string {
+  const config = loadStoredConfig();
+  return config?.hachiosApiKey ?? '';
+}
+
+/**
+ * Set the hachios API key.
+ */
+export function setHachiosApiKey(apiKey: string): void {
+  const config = loadStoredConfig();
+  if (!config) return;
+  config.hachiosApiKey = apiKey || undefined;
+  saveConfig(config);
 }
 
 /**

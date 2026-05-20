@@ -158,6 +158,10 @@ export const CHANNEL_MAP = {
   testLlmConnectionSetup: invoke(RPC_CHANNELS.settings.TEST_LLM_CONNECTION_SETUP),
   getDefaultThinkingLevel: invoke(RPC_CHANNELS.settings.GET_DEFAULT_THINKING_LEVEL),
   setDefaultThinkingLevel: invoke(RPC_CHANNELS.settings.SET_DEFAULT_THINKING_LEVEL),
+  getHachiosAccount: invoke(RPC_CHANNELS.hachios.GET_ACCOUNT),
+  setHachiosAccount: invoke(RPC_CHANNELS.hachios.SET_ACCOUNT),
+  getHachiosApiKey: invoke(RPC_CHANNELS.hachios.GET_API_KEY),
+  setHachiosApiKey: invoke(RPC_CHANNELS.hachios.SET_API_KEY),
   getNetworkProxySettings: invoke(RPC_CHANNELS.settings.GET_NETWORK_PROXY),
   setNetworkProxySettings: invoke(RPC_CHANNELS.settings.SET_NETWORK_PROXY),
 

@@ -40,6 +40,10 @@ export const HANDLED_CHANNELS = [
   RPC_CHANNELS.tools.GET_BROWSER_TOOL_ENABLED,
   RPC_CHANNELS.tools.SET_BROWSER_TOOL_ENABLED,
   RPC_CHANNELS.settings.GET_NETWORK_PROXY,
+  RPC_CHANNELS.hachios.GET_ACCOUNT,
+  RPC_CHANNELS.hachios.SET_ACCOUNT,
+  RPC_CHANNELS.hachios.GET_API_KEY,
+  RPC_CHANNELS.hachios.SET_API_KEY,
   RPC_CHANNELS.dialog.OPEN_FOLDER,
 ] as const
 
@@ -353,6 +357,30 @@ export function registerSettingsHandlers(server: RpcServer, deps: HandlerDeps): 
   server.handle(RPC_CHANNELS.tools.SET_BROWSER_TOOL_ENABLED, async (_ctx, enabled: boolean) => {
     const { setBrowserToolEnabled } = await import('@craft-agent/shared/config/storage')
     setBrowserToolEnabled(enabled)
+  })
+
+  // ============================================================
+  // Hachios Settings
+  // ============================================================
+
+  server.handle(RPC_CHANNELS.hachios.GET_ACCOUNT, async () => {
+    const { getHachiosAccount } = await import('@craft-agent/shared/config/storage')
+    return getHachiosAccount()
+  })
+
+  server.handle(RPC_CHANNELS.hachios.SET_ACCOUNT, async (_ctx, account: string) => {
+    const { setHachiosAccount } = await import('@craft-agent/shared/config/storage')
+    setHachiosAccount(account)
+  })
+
+  server.handle(RPC_CHANNELS.hachios.GET_API_KEY, async () => {
+    const { getHachiosApiKey } = await import('@craft-agent/shared/config/storage')
+    return getHachiosApiKey()
+  })
+
+  server.handle(RPC_CHANNELS.hachios.SET_API_KEY, async (_ctx, apiKey: string) => {
+    const { setHachiosApiKey } = await import('@craft-agent/shared/config/storage')
+    setHachiosApiKey(apiKey)
   })
 
   // ============================================================

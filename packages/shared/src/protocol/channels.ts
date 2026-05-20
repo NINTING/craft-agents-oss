@@ -429,6 +429,13 @@ export const RPC_CHANNELS = {
     ALLOW_PENDING_SENDER: 'messaging:access:allowPending',
     SET_BINDING_ACCESS: 'messaging:access:setBindingAccess',
   },
+  hachios: {
+    GET_ACCOUNT: 'hachios:getAccount',
+    SET_ACCOUNT: 'hachios:setAccount',
+    GET_API_KEY: 'hachios:getApiKey',
+    SET_API_KEY: 'hachios:setApiKey',
+
+  },
 } as const
 
 // IPC_CHANNELS compat alias removed — all consumers now use RPC_CHANNELS
