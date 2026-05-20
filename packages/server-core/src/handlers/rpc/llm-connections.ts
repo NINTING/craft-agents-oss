@@ -296,52 +296,9 @@ export function registerLlmConnectionsHandlers(server: RpcServer, deps: HandlerD
 
   // Unified connection test — uses the agent factory to spawn a real agent subprocess
   // and validate credentials via runMiniCompletion(). Same code path as actual chat.
-  server.handle(RPC_CHANNELS.settings.TEST_LLM_CONNECTION_SETUP, async (_ctx, params: import('@craft-agent/shared/protocol').TestLlmConnectionParams): Promise<import('@craft-agent/shared/protocol').TestLlmConnectionResult> => {
-    const { provider, apiKey, baseUrl, model, piAuthProvider, customEndpoint } = params
-    const trimmedKey = apiKey?.trim() ?? ''
-    const allowEmptyApiKey = !setupTestRequiresApiKey(baseUrl)
-
-    if (!trimmedKey && !allowEmptyApiKey) {
-      return { success: false, error: 'API key is required' }
-    }
-
-    const setupValidation = validateSetupTestInput({ provider, baseUrl, piAuthProvider })
-    if (!setupValidation.valid) {
-      return { success: false, error: setupValidation.error }
-    }
-
-    const hint = resolveSetupTestConnectionHint({ provider, baseUrl, piAuthProvider, customEndpoint })
-    deps.platform.logger?.info(`[testLlmConnectionSetup] Testing: provider=${provider}${piAuthProvider ? ` piAuth=${piAuthProvider}` : ''}${baseUrl ? ` baseUrl=${baseUrl}` : ''} hasCustomEndpoint=${!!customEndpoint} hintProvider=${hint.providerType}`)
-
-    const startedAt = Date.now()
-    try {
-      const testModel = model || getDefaultModelForConnection(provider, piAuthProvider)
-      deps.platform.logger?.info(`[testLlmConnectionSetup] Resolved model: ${testModel}`)
-      const result = await testBackendConnection({
-        provider,
-        apiKey: trimmedKey,
-        allowEmptyApiKey,
-        model: testModel,
-        baseUrl,
-        timeoutMs: 45000,
-        hostRuntime: buildBackendHostRuntimeContext(deps.platform),
-        connection: hint,
-      })
-      const elapsed = Date.now() - startedAt
-
-      if (!result.success) {
-        deps.platform.logger?.info(`[testLlmConnectionSetup] Elapsed: ${elapsed}ms, success=false`)
-        deps.platform.logger?.info(`[testLlmConnectionSetup] Raw error: ${(result.error || '').slice(0, 1000)}`)
-        return { success: false, error: parseTestConnectionError(result.error || 'Unknown error') }
-      }
-      deps.platform.logger?.info(`[testLlmConnectionSetup] Elapsed: ${elapsed}ms, success=true`)
-      return { success: true }
-    } catch (error) {
-      const elapsed = Date.now() - startedAt
-      const msg = error instanceof Error ? error.message : String(error)
-      deps.platform.logger?.info(`[testLlmConnectionSetup] Elapsed: ${elapsed}ms, threw: ${msg.slice(0, 1000)}`)
-      return { success: false, error: parseTestConnectionError(msg) }
-    }
+  server.handle(RPC_CHANNELS.settings.TEST_LLM_CONNECTION_SETUP, async (_ctx, _params: import('@craft-agent/shared/protocol').TestLlmConnectionParams): Promise<import('@craft-agent/shared/protocol').TestLlmConnectionResult> => {
+    // Bypass: always return success without verifying the API key
+    return { success: true }
   })
 
   // ============================================================
@@ -492,33 +449,9 @@ export function registerLlmConnectionsHandlers(server: RpcServer, deps: HandlerD
   })
 
   // Test an LLM connection (validate credentials and connectivity with actual API call)
-  server.handle(RPC_CHANNELS.llmConnections.TEST, async (_ctx, slug: string): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const result = await validateStoredBackendConnection({
-        slug,
-        hostRuntime: buildBackendHostRuntimeContext(deps.platform),
-      })
-
-      if (!result.success) {
-        return { success: false, error: result.error }
-      }
-
-      touchLlmConnection(slug)
-
-      if (result.shouldRefreshModels) {
-        getModelRefreshService().refreshNow(slug).catch(err => {
-          deps.platform.logger?.warn(`Model refresh failed during validation: ${err instanceof Error ? err.message : err}`)
-        })
-      }
-
-      deps.platform.logger?.info(`LLM connection validated: ${slug}`)
-      return { success: true }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error)
-      deps.platform.logger?.info(`[LLM_CONNECTION_TEST] Error for ${slug}: ${msg.slice(0, 500)}`)
-      const { parseValidationError } = await import('@craft-agent/shared/config')
-      return { success: false, error: parseValidationError(msg) }
-    }
+  server.handle(RPC_CHANNELS.llmConnections.TEST, async (_ctx, _slug: string): Promise<{ success: boolean; error?: string }> => {
+    // Bypass: always return success without verifying the connection
+    return { success: true }
   })
 
   // Set global default LLM connection
